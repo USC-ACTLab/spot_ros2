@@ -19,7 +19,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update -q && \
 WORKDIR /ros_ws/src
 
 # Clone driver code
-RUN git clone https://github.com/bdaiinstitute/spot_ros2.git .
+RUN git clone https://github.com/USC-ACTLab/spot_ros2.git .
 RUN git submodule update --init --recursive
 
 # Run install script
