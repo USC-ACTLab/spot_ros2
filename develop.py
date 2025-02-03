@@ -7,10 +7,16 @@ def lookForDevContainer(docker_client):
     '''
     look for the dev image locally; build if it doesn't exist
     '''
+    dev_image_label = "spot_ros2_dev_container:latest"
     try:
-        dev_container = docker_client.images.get("spot_ros2_dev_container:latest")
+        dev_container = docker_client.images.get(dev_image_label)
     except docker.errors.ImageNotFound:
         print("Image not found, building")
+        curr_dir = os.path.abspath(os.getcwd())
+        dev_container, build_log = docker_client.images.build(path=curr_dir,
+                                                   dockerfile=os.path.join(curr_dir, "devContainer.Dockerfile"),
+                                                   tag=dev_image_label,
+                                                   rm=True)
     finally:
         return dev_container
     
