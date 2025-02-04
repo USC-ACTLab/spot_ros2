@@ -34,6 +34,7 @@ class DefaultSpotApi : public SpotApi {
   [[nodiscard]] std::shared_ptr<StateClientInterface> stateClientInterface() const override;
   [[nodiscard]] std::shared_ptr<TimeSyncApi> timeSyncInterface() const override;
   [[nodiscard]] std::shared_ptr<WorldObjectClientInterface> worldObjectClientInterface() const override;
+  [[nodiscard]] std::shared_ptr<PointCloudClientInterface> point_cloud_client_interface() const override;
 
  private:
   std::unique_ptr<::bosdyn::client::ClientSdk> client_sdk_;
@@ -43,6 +44,7 @@ class DefaultSpotApi : public SpotApi {
   std::shared_ptr<StateClientInterface> state_client_interface_;
   std::shared_ptr<TimeSyncApi> time_sync_api_;
   std::shared_ptr<WorldObjectClientInterface> world_object_client_interface_;
+  std::shared_ptr<PointCloudClientInterface> point_cloud_client_interface_;
   std::string robot_name_;
   const std::chrono::seconds timesync_timeout_;
 };

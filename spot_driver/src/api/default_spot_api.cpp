@@ -5,6 +5,7 @@
 #include <memory>
 #include <spot_driver/api/default_image_client.hpp>
 #include <spot_driver/api/default_kinematic_api.hpp>
+#include <spot_driver/api/default_point_cloud_client.hpp>
 #include <spot_driver/api/default_spot_api.hpp>
 #include <spot_driver/api/default_state_client.hpp>
 #include <spot_driver/api/default_time_sync_api.hpp>
@@ -108,6 +109,17 @@ tl::expected<void, std::string> DefaultSpotApi::authenticate(const std::string& 
                                world_object_client_result.status.DebugString());
   }
   world_object_client_interface_ = std::make_shared<DefaultWorldObjectClient>(world_object_client_result.response);
+
+  // LiDAR API
+  const auto lidar_client_result = robot_->EnsureServiceClient<::bosdyn::client::PointCloudClient>(
+      ::bosdyn::client::PointCloudClient::GetDefaultServiceName());
+  if (!lidar_client_result.status) {
+    point_cloud_client_interface_ = nullptr;
+  } else {
+    point_cloud_client_interface = std::make_shared<DefaultPointCloudClient>(lidar_client_result.response, time_sync_api_, robot_name_);
+  }
+
+  // TODO: Correct for clock skew
 
   return {};
 }

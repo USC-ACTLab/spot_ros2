@@ -51,6 +51,7 @@ find_package(OpenCV 4 REQUIRED)
 add_library(spot_api
   src/api/default_kinematic_api.cpp
   src/api/default_image_client.cpp
+  src/api/default_point_cloud_client.cpp
   src/api/default_spot_api.cpp
   src/api/default_state_client.cpp
   src/api/default_time_sync_api.cpp

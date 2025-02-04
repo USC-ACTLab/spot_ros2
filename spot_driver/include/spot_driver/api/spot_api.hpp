@@ -7,6 +7,7 @@
 #include <spot_driver/api/time_sync_api.hpp>
 #include <spot_driver/api/world_object_client_interface.hpp>
 #include <spot_driver/interfaces/image_client_interface.hpp>
+#include <spot_driver/interfaces/point_cloud_client_interface.hpp>
 #include <tl_expected/expected.hpp>
 
 #include <memory>
@@ -46,5 +47,11 @@ class SpotApi {
   virtual std::shared_ptr<StateClientInterface> stateClientInterface() const = 0;
   virtual std::shared_ptr<TimeSyncApi> timeSyncInterface() const = 0;
   [[nodiscard]] virtual std::shared_ptr<WorldObjectClientInterface> worldObjectClientInterface() const = 0;
+
+  /**
+   * @brief Get a shared_ptr to an instance of Spot's Point Cloud client
+   * @return A shared_ptr to the point cloud client interface. nullptr if LiDAR not available
+   */
+  virtual std::shared_ptr<PointCloudClientInterface> point_cloud_client_interface() const = 0;
 };
 }  // namespace spot_ros2
