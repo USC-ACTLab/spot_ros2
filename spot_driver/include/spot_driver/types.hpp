@@ -35,6 +35,8 @@ enum class SpotCamera {
   HAND,
 };
 
+static constexpr char eap_point_cloud_source[] = "velodyne-point-cloud";
+
 /**
  * @brief Map from each ROS camera topic name to SpotCamera value.
  */

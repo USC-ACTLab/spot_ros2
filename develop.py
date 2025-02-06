@@ -47,12 +47,13 @@ def startDevContainer(docker_client, image):
     return container
 
 def buildSourceFils(running_container):
-    running_container.exec_run(". /opt/ros/humble/setup.sh")
+    running_container.exec_run("source", " ", "/opt/ros/humble/setup.bash")
 
 def main():
     client = docker.from_env()
     image = lookForDevContainer(client)
     container = startDevContainer(client, image)
+    buildSourceFils(container)
     subprocess.run(["docker", "exec", "-it", container.id, "bash"])
     container.stop()
 

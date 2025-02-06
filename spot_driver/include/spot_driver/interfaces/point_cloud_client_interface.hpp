@@ -6,9 +6,10 @@
 
 #pragma once
 
+#include <bosdyn/api/point_cloud.pb.h>
 #include <spot_driver/types.hpp>
 #include <tl_expected/expected.hpp>
-#include <bosdyn/api/point_cloud.pb.h>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 
 #include <string>
 
@@ -26,6 +27,6 @@ class PointCloudClientInterface {
     PointCloudClientInterface& operator=(PointCloudClientInterface&& other) = default;
     PointCloudClientInterface& operator=(const PointCloudClientInterface&) = delete;
     virtual ~PointCloudClientInterface() = default;
-    virtual tl::expected<::bosdyn::api::PointCloud, std::string> getPointCloud(::bosdyn::api::GetPointCloudRequest request) = 0;
+    virtual tl::expected<sensor_msgs::msg::PointCloud2, std::string> getPointCloud(::bosdyn::api::GetPointCloudRequest request) = 0;
 };
 } // namespace spot_ros2
