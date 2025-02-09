@@ -19,7 +19,7 @@ namespace spot_ros2 {
  * @brief Defines an interface for a class to interact with Spot's point cloud client
  */
 class PointCloudClientInterface {
-  public:
+public:
     // client is move-only
     PointCloudClientInterface() = default;
     PointCloudClientInterface(PointCloudClientInterface&& other) = default;
