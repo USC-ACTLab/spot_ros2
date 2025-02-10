@@ -27,13 +27,13 @@ SpotPointCloudPublisher::SpotPointCloudPublisher(const std::shared_ptr<PointClou
                                                  std::unique_ptr<TfBroadcasterInterfaceBase> tf_broadcaster,
                                                  std::unique_ptr<TimerInterfaceBase> timer)
     : pc_client_interface_(pc_client_interface),
-      middleware_handle_(middleware_handle),
-      parameters_(parameters),
-      logger_(logger),
-      tf_broadcaster_(tf_broadcaster),
-      timer_(timer) {
+      middleware_handle_(std::move(middleware_handle)),
+      parameters_(std::move(parameters)),
+      logger_(std::move(logger)),
+      tf_broadcaster_(std::move(tf_broadcaster)),
+      timer_(std::move(timer)) {
     createVLPPointCloudRequest();
-    timer_->setTimer(kPointCloudPublisherPeriod_HZ, [this]() {timerCallback()});
+    timer_->setTimer(kPointCloudPublisherPeriod_HZ, [this]() {timerCallback();});
 }
 
 void SpotPointCloudPublisher::timerCallback() {
@@ -42,9 +42,9 @@ void SpotPointCloudPublisher::timerCallback() {
         return;
     }
 
-    const auto point_cloud_result = pc_client_->getPointCloud(point_cloud_request_msg_.value());
+    const auto point_cloud_result = pc_client_interface_->getPointCloud(point_cloud_request_msg_.value());
     if (!point_cloud_result.has_value()) {
-        logger_logError(std::string{"Failed to get point cloud from robot: "}.append(image_result.error()));
+        logger_->logError(std::string{"Failed to get point cloud from robot: "}.append(point_cloud_result.error()));
         return;
     }
 

@@ -14,6 +14,9 @@
 #include <spot_driver/interfaces/rclcpp_wall_timer_interface.hpp>
 #include <tl_expected/expected.hpp>
 
+namespace {
+constexpr auto kPublisherHistoryDepth = 10;
+}
 
 namespace spot_ros2::point_cloud {
 

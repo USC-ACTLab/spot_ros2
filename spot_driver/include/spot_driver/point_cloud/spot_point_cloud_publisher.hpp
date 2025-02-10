@@ -24,6 +24,7 @@
 namespace spot_ros2::point_cloud {
 
 class SpotPointCloudPublisher {
+public:
     /**
      * @brief A handle class around rclcpp::Node operations for SpotImagePublisher
      */
@@ -34,7 +35,6 @@ class SpotPointCloudPublisher {
         virtual tl::expected<void, std::string> publishPointCloud(const sensor_msgs::msg::PointCloud2& msg) = 0;
     };
 
-public:
     /**
      * @brief Constructor for SpotPointCloudPublisher, which allows setting the specific implementation of the interface
      * classes which are used by the node.
@@ -69,7 +69,7 @@ private:
     std::optional<::bosdyn::api::GetPointCloudRequest> point_cloud_request_msg_;
 
     // Interface classes to interact with Spot and the middleware.
-    std::unique_ptr<PointCloudClientInterface> pc_client_interface_;
+    std::shared_ptr<PointCloudClientInterface> pc_client_interface_;
     std::unique_ptr<MiddlewareHandle> middleware_handle_;
 
     std::unique_ptr<ParameterInterfaceBase> parameters_;

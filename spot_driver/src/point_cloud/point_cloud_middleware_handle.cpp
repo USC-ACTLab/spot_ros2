@@ -16,13 +16,14 @@ PointCloudMiddlewareHandle::PointCloudMiddlewareHandle(const std::shared_ptr<rcl
         "lidar/points", makePublisherQoS(kPublisherHistoryDepth));
 }
 
-PointCloudMiddlewareHandle::PointCloudMiddlewareHandle(const rclcpp::NodeOptions& node_options = rclcpp::NodeOptions{})
+PointCloudMiddlewareHandle::PointCloudMiddlewareHandle(const rclcpp::NodeOptions& node_options)
     : PointCloudMiddlewareHandle(std::make_shared<rclcpp::Node>("point_cloud_publisher", node_options)) {}
 
 tl::expected<void, std::string> PointCloudMiddlewareHandle::publishPointCloud(const sensor_msgs::msg::PointCloud2& msg) {
     if (point_cloud_publisher_ == nullptr) {
         return tl::make_unexpected("Failed to create point cloud publisher");
     }
-    point_cloud_publisher->publish(msg);
+    point_cloud_publisher_->publish(msg);
+    return {};
 }
 } // namespace spot_ros2::point_cloud

@@ -16,7 +16,7 @@
 #include <spot_driver/interfaces/rclcpp_wall_timer_interface.hpp>
 
 namespace {
-constexpr auto KSDKClientName = "spot_lidar_publisher";
+constexpr auto kSDKClientName = "spot_lidar_publisher";
 }
 
 namespace spot_ros2::point_cloud {
@@ -33,7 +33,7 @@ SpotPointCloudPublisherNode::SpotPointCloudPublisherNode(std::unique_ptr<SpotApi
                std::move(tf_broadcaster), std::move(timer));
 }
 
-SpotPointCloudPublisherNode::SpotPointCloudPublisherNode(const rclcpp::NodeOptions& node_options = rclcpp::NodeOptions{}) {
+SpotPointCloudPublisherNode::SpotPointCloudPublisherNode(const rclcpp::NodeOptions& node_options) {
     const auto node = std::make_shared<rclcpp::Node>("point_cloud_publisher", node_options);
     node_base_interface_ = std::make_unique<RclcppNodeInterface>(node->get_node_base_interface());
 
