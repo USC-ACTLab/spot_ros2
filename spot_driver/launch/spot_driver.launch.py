@@ -146,6 +146,14 @@ def launch_setup(context: LaunchContext, ld: LaunchDescription) -> None:
     )
     ld.add_action(spot_image_publishers)
 
+    spot_point_cloud_node = Node(
+        package="spot_driver",
+        executable="spot_point_cloud_publisher_node",
+        name="spot_point_cloud_publisher_node",
+        output="screen",
+        namespace=spot_name,
+    )
+    ld.add_action(spot_point_cloud_node)
 
 def generate_launch_description() -> LaunchDescription:
     launch_args = []
