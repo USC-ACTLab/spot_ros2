@@ -15,7 +15,7 @@
 #include <spot_driver/types.hpp>
 
 namespace {
-    constexpr auto kPointCloudPublisherPeriod_HZ = std::chrono::duration<double>(1.0 / 15.0);
+constexpr auto kPointCloudPublisherPeriod_HZ = std::chrono::duration<double>(1.0 / 15.0);
 }
 
 namespace spot_ros2::point_cloud {
