@@ -151,6 +151,7 @@ def launch_setup(context: LaunchContext, ld: LaunchDescription) -> None:
         executable="spot_point_cloud_publisher_node",
         name="spot_point_cloud_publisher_node",
         output="screen",
+        parameters=[config_file, spot_name_param],
         namespace=spot_name,
     )
     ld.add_action(spot_point_cloud_node)
