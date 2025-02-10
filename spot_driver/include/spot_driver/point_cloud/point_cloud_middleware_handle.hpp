@@ -45,6 +45,6 @@ private:
     std::shared_ptr<rclcpp::Node> node_;
 
     // Point cloud publisher
-    std::unique_ptr<rclcpp::Publisher<sensor_msgs::msg::PointCloud2>> point_cloud_publisher;
+    std::shared_ptr<rclcpp::Publisher<sensor_msgs::msg::PointCloud2>> point_cloud_publisher_;
 };
 } // namespace spot_ros2::point_cloud
