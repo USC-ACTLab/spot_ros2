@@ -6,10 +6,6 @@
 
 #include <rclcpp/node.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
-#include <spot_driver/interfaces/rclcpp_logger_interface.hpp>
-#include <spot_driver/interfaces/rclcpp_parameter_interface.hpp>
-#include <spot_driver/interfaces/rclcpp_tf_broadcaster_interface.hpp>
-#include <spot_driver/interfaces/rclcpp_wall_timer_interface.hpp>
 #include <spot_driver/point_cloud/point_cloud_middleware_handle.hpp>
 
 namespace spot_ros2::point_cloud {
@@ -29,6 +25,4 @@ tl::expected<void, std::string> PointCloudMiddlewareHandle::publishPointCloud(co
     }
     point_cloud_publisher->publish(msg);
 }
-
-
 } // namespace spot_ros2::point_cloud

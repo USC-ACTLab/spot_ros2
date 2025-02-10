@@ -44,23 +44,19 @@ public:
      * @param middleware_handle A unique_ptr to an instance of a class that implements
      * SpotPointCloudPublisher::MiddlewareHandle
      */
-    SpotPointCloudPublisher(const std::shared_ptr<ImageClientInterface>& image_client_interface,
+    SpotPointCloudPublisher(const std::shared_ptr<PointCloudClientInterface>& pc_client_interface,
                             std::unique_ptr<MiddlewareHandle> middleware_handle,
                             std::unique_ptr<ParameterInterfaceBase> parameters, 
                             std::unique_ptr<LoggerInterfaceBase> logger,
                             std::unique_ptr<TfBroadcasterInterfaceBase> tf_broadcaster,
                             std::unique_ptr<TimerInterfaceBase> timer);
-    /**
-     * @brief Connect to Spot and start publishing image data.
-     */
-    [[nodiscard]] bool initialize();
 
 private:
     /**
      * @brief Callback function which is called through timer_interface_.
      * @details Requests point cloud from Spot, and then publishes the point cloud
      */
-    void timerCallback(bool uncompress_images, bool publish_compressed_images);
+    void timerCallback();
 
     /**
      * @brief Create a point cloud request message for the velodyne LiDAR
@@ -70,7 +66,7 @@ private:
     /**
      * @brief Point cloud request message which is set when initialize() is called.
      */
-    std::optional<::bosdyn::api::GetPointCloudRequest> point_cloud_request_msg;
+    std::optional<::bosdyn::api::GetPointCloudRequest> point_cloud_request_msg_;
 
     // Interface classes to interact with Spot and the middleware.
     std::unique_ptr<PointCloudClientInterface> pc_client_interface_;
