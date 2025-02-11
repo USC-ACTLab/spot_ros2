@@ -81,6 +81,14 @@ def launch_setup(context: LaunchContext, ld: LaunchDescription) -> None:
     )
     ld.add_action(object_sync_node)
 
+    # configure spot to use LiDAR
+    use_pack_description = SetEnvironmentVariable(name='SPOT_PACK', value='1')
+    use_velodyne_description = SetEnvironmentVariable(name='SPOT_VELODYNE', value='1')
+    use_lidar_description = SetEnvironmentVariable(name='SPOT_LIDAR_MOUNT`', value='1')
+    ld.add_action(use_pack_description)
+    ld.add_action(use_lidar_description)
+    ld.add_action(use_velodyne_description)
+
     robot_description = Command(
         [
             PathJoinSubstitution([FindExecutable(name="xacro")]),
@@ -154,8 +162,6 @@ def launch_setup(context: LaunchContext, ld: LaunchDescription) -> None:
         parameters=[config_file, spot_name_param, robot_description_params],
         namespace=spot_name,
     )
-    use_velodyne_description = SetEnvironmentVariable(name='SPOT_VELODYNE', value=1)
-    ld.add_action(use_velodyne_description)
     ld.add_action(spot_point_cloud_node)
 
 def generate_launch_description() -> LaunchDescription:

@@ -24,7 +24,8 @@ std_msgs::msg::Header createPointCloudHeader(const ::bosdyn::api::PointCloudSour
                                              const std::string robot_name,
                                              const google::protobuf::Duration& clock_skew) {
   std_msgs::msg::Header header;
-  header.frame_id = (robot_name.empty() ? "" : robot_name + "/") + point_cloud_source.frame_name_sensor();
+  header.frame_id = "velodyne";
+//   header.frame_id = (robot_name.empty() ? "" : robot_name + "/") + point_cloud_source.frame_name_sensor();
   header.stamp = spot_ros2::robotTimeToLocalTime(point_cloud_source.acquisition_time(), clock_skew);
   return header;
 }
