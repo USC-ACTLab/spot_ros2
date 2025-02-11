@@ -6,6 +6,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update -q && \
     apt-get install -yq --no-install-recommends \
     curl \
     wget \
+    ros-humble-velodyne \
+    ros-humble-velodyne-description \
     python3-pip \
     python-is-python3 \
     python3-argcomplete \

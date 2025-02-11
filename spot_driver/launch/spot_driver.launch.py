@@ -3,7 +3,7 @@
 import os
 
 from launch import LaunchContext, LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, OpaqueFunction
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, OpaqueFunction, SetEnvironmentVariable
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution, TextSubstitution
@@ -151,9 +151,11 @@ def launch_setup(context: LaunchContext, ld: LaunchDescription) -> None:
         executable="spot_point_cloud_publisher_node",
         name="spot_point_cloud_publisher_node",
         output="screen",
-        parameters=[config_file, spot_name_param],
+        parameters=[config_file, spot_name_param, robot_description_params],
         namespace=spot_name,
     )
+    use_velodyne_description = SetEnvironmentVariable(name='SPOT_VELODYNE', value=1)
+    ld.add_action(use_velodyne_description)
     ld.add_action(spot_point_cloud_node)
 
 def generate_launch_description() -> LaunchDescription:
