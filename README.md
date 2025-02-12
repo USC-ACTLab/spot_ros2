@@ -108,7 +108,7 @@ It can be installed from source as a normal ROS package [here](https://github.co
 If you encounter problems when using this repository, feel free to ask a question in the [discussions](https://github.com/bdaiinstitute/spot_ros2/discussions), or open an [issue](https://github.com/bdaiinstitute/spot_ros2/issues) describing the problem in context.
 
 ## Verify Package Versions
-If you encounter `ModuleNotFoundErrors` with `bosdyn` packages upon running the driver, it is likely that the necessary Boston Dynamics API packages did not get installed with `install_spot_ros2.sh`. To check this, you can run the following command. Note that all versions should be `4.1.1`. 
+If you encounter `ModuleNotFoundErrors` with `bosdyn` packages upon running the driver, it is likely that the necessary Boston Dynamics API packages did not get installed with `install_spot_ros2.sh`. To check this, you can run the following command. Note that all versions should be `4.1.1`.
 ```bash
 $ pip list | grep bosdyn
 bosdyn-api                               4.1.1
