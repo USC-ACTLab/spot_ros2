@@ -28,3 +28,4 @@ RUN chmod +x /ros_ws/src/install_spot_ros2.sh
 
 # Run install script
 RUN /ros_ws/src/install_spot_ros2.sh
+WORKDIR /ros_ws
