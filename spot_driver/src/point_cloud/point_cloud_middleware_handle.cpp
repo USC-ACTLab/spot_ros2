@@ -8,6 +8,10 @@
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <spot_driver/point_cloud/point_cloud_middleware_handle.hpp>
 
+namespace {
+constexpr int kPublisherHistoryDepth = 10;
+}  // namespace
+
 namespace spot_ros2::point_cloud {
 
 PointCloudMiddlewareHandle::PointCloudMiddlewareHandle(const std::shared_ptr<rclcpp::Node>& node) : node_(node) {
