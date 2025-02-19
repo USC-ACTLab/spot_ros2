@@ -116,10 +116,9 @@ tl::expected<void, std::string> DefaultSpotApi::authenticate(const std::string& 
   if (!lidar_client_result.status) {
     point_cloud_client_interface_ = nullptr;
   } else {
-    point_cloud_client_interface_ = std::make_shared<DefaultPointCloudClient>(lidar_client_result.response, time_sync_api_, robot_name_);
+    point_cloud_client_interface_ =
+        std::make_shared<DefaultPointCloudClient>(lidar_client_result.response, time_sync_api_, robot_name_);
   }
-
-  // TODO: Correct for clock skew
 
   return {};
 }

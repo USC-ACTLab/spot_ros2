@@ -10,8 +10,8 @@
 #include <spot_driver/interfaces/rclcpp_parameter_interface.hpp>
 #include <spot_driver/interfaces/rclcpp_tf_broadcaster_interface.hpp>
 #include <spot_driver/interfaces/rclcpp_wall_timer_interface.hpp>
-#include <spot_driver/point_cloud/spot_point_cloud_publisher.hpp>
 #include <spot_driver/point_cloud/point_cloud_middleware_handle.hpp>
+#include <spot_driver/point_cloud/spot_point_cloud_publisher.hpp>
 #include <spot_driver/types.hpp>
 
 namespace {
@@ -32,30 +32,32 @@ SpotPointCloudPublisher::SpotPointCloudPublisher(const std::shared_ptr<PointClou
       logger_(std::move(logger)),
       tf_broadcaster_(std::move(tf_broadcaster)),
       timer_(std::move(timer)) {
-    createVLPPointCloudRequest();
-    timer_->setTimer(kPointCloudPublisherPeriod_HZ, [this]() {timerCallback();});
+  createVLPPointCloudRequest();
+  timer_->setTimer(kPointCloudPublisherPeriod_HZ, [this]() {
+    timerCallback();
+  });
 }
 
 void SpotPointCloudPublisher::timerCallback() {
-    if (!point_cloud_request_msg_) {
-        logger_->logError("No point cloud request message generated.");
-        return;
-    }
+  if (!point_cloud_request_msg_) {
+    logger_->logError("No point cloud request message generated.");
+    return;
+  }
 
-    const auto point_cloud_result = pc_client_interface_->getPointCloud(point_cloud_request_msg_.value());
-    if (!point_cloud_result.has_value()) {
-        logger_->logError(std::string{"Failed to get point cloud from robot: "}.append(point_cloud_result.error()));
-        return;
-    }
+  const auto point_cloud_result = pc_client_interface_->getPointCloud(point_cloud_request_msg_.value());
+  if (!point_cloud_result.has_value()) {
+    logger_->logError(std::string{"Failed to get point cloud from robot: "}.append(point_cloud_result.error()));
+    return;
+  }
 
-    middleware_handle_->publishPointCloud(point_cloud_result.value());
+  middleware_handle_->publishPointCloud(point_cloud_result.value());
 }
 
 void SpotPointCloudPublisher::createVLPPointCloudRequest() {
-    ::bosdyn::api::GetPointCloudRequest point_cloud_request_msg;
-    ::bosdyn::api::PointCloudRequest *pc_request = point_cloud_request_msg.add_point_cloud_requests();
-    pc_request->set_point_cloud_source_name(eap_point_cloud_source);
-    point_cloud_request_msg_ = point_cloud_request_msg;
+  ::bosdyn::api::GetPointCloudRequest point_cloud_request_msg;
+  ::bosdyn::api::PointCloudRequest* pc_request = point_cloud_request_msg.add_point_cloud_requests();
+  pc_request->set_point_cloud_source_name(eap_point_cloud_source);
+  point_cloud_request_msg_ = point_cloud_request_msg;
 }
 
-} // namespace spot_ros2::point_cloud
+}  // namespace spot_ros2::point_cloud
