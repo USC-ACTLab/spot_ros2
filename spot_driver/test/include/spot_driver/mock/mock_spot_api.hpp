@@ -9,6 +9,7 @@
 #include <spot_driver/api/state_client_interface.hpp>
 #include <spot_driver/api/time_sync_api.hpp>
 #include <spot_driver/interfaces/image_client_interface.hpp>
+#include <spot_driver/interfaces/point_cloud_client_interface.hpp>
 
 #include <memory>
 #include <optional>
@@ -27,5 +28,6 @@ class MockSpotApi : public SpotApi {
   MOCK_METHOD(std::shared_ptr<StateClientInterface>, stateClientInterface, (), (const, override));
   MOCK_METHOD(std::shared_ptr<TimeSyncApi>, timeSyncInterface, (), (const, override));
   MOCK_METHOD(std::shared_ptr<WorldObjectClientInterface>, worldObjectClientInterface, (), (const, override));
+  MOCK_METHOD(std::shared_ptr<PointCloudClientInterface>, point_cloud_client_interface, (), (const, override));
 };
 }  // namespace spot_ros2::test

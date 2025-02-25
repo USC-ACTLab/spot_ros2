@@ -25,6 +25,7 @@
 `spot_ros2` is a set of ROS 2 packages for interacting with Boston Dynamics' Spot, based off the [the ROS 1 equivalent](https://github.com/heuristicus/spot_ros).
 Its [`spot_driver`](spot_driver) package is designed to bridge the core functionality of the Spot SDK to ROS 2, and exposes topics, services, and actions necessary to control Spot and receive state information (such as images). 
 Currently, this repository corresponds to version 4.1.1 of the [spot-sdk](https://github.com/boston-dynamics/spot-sdk/releases/tag/v4.1.1).
+Currently, this repository corresponds to version 4.1.1 of the [spot-sdk](https://github.com/boston-dynamics/spot-sdk/releases/tag/v4.1.1).
 
 ## Requirements
 This repository is supported for use with Ubuntu 22.04 and [ROS 2 Humble](https://docs.ros.org/en/humble/index.html) on both ARM64 and AMD64 platforms.
@@ -127,12 +128,29 @@ bosdyn-mission-api-msgs                  4.1.1
 bosdyn-msgs                              4.1.1
 bosdyn-spot-api-msgs                     4.1.1
 bosdyn-spot-cam-api-msgs                 4.1.1
+bosdyn-api                               4.1.1
+bosdyn-api-msgs                          4.1.1
+bosdyn-auto-return-api-msgs              4.1.1
+bosdyn-autowalk-api-msgs                 4.1.1
+bosdyn-choreography-client               4.1.1
+bosdyn-client                            4.1.1
+bosdyn-core                              4.1.1
+bosdyn-graph-nav-api-msgs                4.1.1
+bosdyn-keepalive-api-msgs                4.1.1
+bosdyn-log-status-api-msgs               4.1.1
+bosdyn-metrics-logging-api-msgs          4.1.1
+bosdyn-mission                           4.1.1
+bosdyn-mission-api-msgs                  4.1.1
+bosdyn-msgs                              4.1.1
+bosdyn-spot-api-msgs                     4.1.1
+bosdyn-spot-cam-api-msgs                 4.1.1
 ```
 If these packages were not installed correctly on your system, you can try manually installing them following [Boston Dynamics' guide](https://dev.bostondynamics.com/docs/python/quickstart#install-spot-python-packages).
 
 The above command verifies the installation of the `bosdyn` packages from Boston Dynamics and the generated protobuf to ROS messages in the `bosdyn_msgs` package (these have `msgs` in the name). You can also verify the `bosdyn_msgs` installation was correct with the following command:
 ```bash
 $ ros2 pkg xml bosdyn_msgs -t version
+4.1.1
 4.1.1
 ```
 
@@ -141,6 +159,7 @@ Finally, you can verify the installation of the `spot-cpp-sdk` with the followin
 $ dpkg -l spot-cpp-sdk
 ||/ Name           Version      Architecture Description
 +++-==============-============-============-=================================
+ii  spot-cpp-sdk   4.1.1        amd64        Boston Dynamics Spot C++ SDK
 ii  spot-cpp-sdk   4.1.1        amd64        Boston Dynamics Spot C++ SDK
 ```
 

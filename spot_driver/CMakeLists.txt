@@ -51,6 +51,7 @@ find_package(OpenCV 4 REQUIRED)
 add_library(spot_api
   src/api/default_kinematic_api.cpp
   src/api/default_image_client.cpp
+  src/api/default_point_cloud_client.cpp
   src/api/default_spot_api.cpp
   src/api/default_state_client.cpp
   src/api/default_time_sync_api.cpp
@@ -77,6 +78,9 @@ add_library(spot_api
   src/kinematic/kinematic_middleware_handle.cpp
   src/object_sync/object_synchronizer.cpp
   src/object_sync/object_synchronizer_node.cpp
+  src/point_cloud/spot_point_cloud_publisher.cpp
+  src/point_cloud/spot_point_cloud_publisher_node.cpp
+  src/point_cloud/point_cloud_middleware_handle.cpp
   src/robot_state/state_middleware_handle.cpp
   src/robot_state/state_publisher.cpp
   src/robot_state/state_publisher_node.cpp
@@ -117,6 +121,33 @@ rclcpp_components_register_node(
   spot_image_publisher_component
   PLUGIN "spot_ros2::images::SpotImagePublisherNode"
   EXECUTABLE spot_image_publisher_node_component)
+
+###
+# Spot point cloud publisher
+###
+
+# Create executable to allow running SpotPointCloudPublisherNode directly as a ROS 2 node
+add_executable(spot_point_cloud_publisher_node src/point_cloud/spot_point_cloud_publisher_node_main.cpp)
+target_include_directories(spot_point_cloud_publisher_node
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+target_link_libraries(spot_point_cloud_publisher_node PUBLIC spot_api)
+
+# Register a composable node to allow loading SpotPointCloudPublisherNode in a component container
+add_library(spot_point_cloud_publisher_component SHARED src/point_cloud/spot_point_cloud_publisher_component.cpp)
+target_include_directories(spot_point_cloud_publisher_component
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+target_link_libraries(spot_point_cloud_publisher_component PUBLIC spot_api)
+
+rclcpp_components_register_node(
+  spot_point_cloud_publisher_component
+  PLUGIN "spot_ros2::point_cloud::SpotPointCloudPublisherNode"
+  EXECUTABLE spot_point_cloud_publisher_node_component)
 
 ###
 # Spot state publisher
@@ -245,6 +276,8 @@ install(
     object_synchronizer_node
     spot_image_publisher_node
     spot_image_publisher_node_component
+    spot_point_cloud_publisher_node
+    spot_point_cloud_publisher_node_component
     spot_inverse_kinematics_node
     spot_inverse_kinematics_node_component
     state_publisher_node

@@ -8,3 +8,6 @@
 	path = spot_description
 	url = https://github.com/bdaiinstitute/spot_description.git
 	branch = main
+[submodule "spot-bev-fusion-ros"]
+	path = spot-bev-fusion-ros
+	url = https://github.com/USC-ACTLab/spot-bev-fusion-ros.git

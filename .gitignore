@@ -9,3 +9,5 @@ docs/source/*.rst
 build/*
 install/*
 log/*
+*/build
+compile_commands.json
