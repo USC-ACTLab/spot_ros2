@@ -87,6 +87,7 @@ def main():
         try:
             buildSourceFiles(container)
         except KeyboardInterrupt:
+            container.stop()
             exit(1)
 
     if not args.build or args.run:
