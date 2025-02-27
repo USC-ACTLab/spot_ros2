@@ -9,11 +9,10 @@ import docker.types
 ROS_SOURCE_COMMAND = "source /opt/ros/humble/setup.bash"
 
 
-def lookForDevContainer(docker_client):
+def lookForDevContainer(docker_client, dev_image_label="spot_ros2_dev_container:latest"):
     """
     look for the dev image locally; build if it doesn't exist
     """
-    dev_image_label = "spot_ros2_dev_container:latest"
     try:
         dev_container = docker_client.images.get(dev_image_label)
     except docker.errors.ImageNotFound:
@@ -79,9 +78,13 @@ def main():
     parser = argparse.ArgumentParser(prog="develop.py", description="Launch spot ros dev contanier")
     parser.add_argument("-b", "--build", help="Build the container", action="store_true")
     parser.add_argument("-r", "--run", help="Run the container after build", action="store_true")
+    parser.add_argument("-v", "--bev", help="Launch the BEV container", action="store_true")
     args = parser.parse_args()
     client = docker.from_env()
-    image = lookForDevContainer(client)
+    if args.bev:
+        image = lookForDevContainer(client, dev_image_label="bev_ros2_container:latest")
+    else:
+        image = lookForDevContainer(client)
     container = startDevContainer(client, image)
     if args.build:
         try:
