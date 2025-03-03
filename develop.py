@@ -25,15 +25,24 @@ def lookForDevContainer(docker_client, dev_image_label="spot_ros2_dev_container:
         return dev_container
 
 
-def startDevContainer(docker_client, image):
+def startDevContainer(docker_client, image, is_bev_container=False):
     """
     mount current repo and sub folders containing code into the container
     """
-    current_dir = os.path.abspath(os.getcwd())
     ros_ws_path = "/ros_ws/src"
+    if not is_bev_container:
+        print("Mounting source without BEVFusion")
+        current_dir = os.path.abspath(os.getcwd())
+        all_targets = os.listdir(current_dir)
+        targets_to_mount = [item for item in all_targets if item != "spot-bev-fusion-ros"]
+        volumes = {}
+        for target in targets_to_mount:
+            volumes[os.path.join(current_dir, target)] = {"bind": os.path.join(ros_ws_path, target), "mode": "rw"}
+    else:
+        current_dir = os.path.abspath(os.path.join(os.getcwd(), "spot-bev-fusion-ros"))
+        volumes = {current_dir: {"bind": os.path.join(ros_ws_path, "spot-bev-fusion-ros"), "mode": "rw"}}
 
     # Create volume mounts for each subdirectory
-    volumes = {current_dir: {"bind": ros_ws_path, "mode": "rw"}}
 
     device_request = [docker.types.DeviceRequest(count=-1, capabilities=[["gpu"]])]
 
@@ -55,12 +64,21 @@ def startDevContainer(docker_client, image):
     return container
 
 
-def buildSourceFiles(running_container):
+def buildSourceFiles(running_container, build_bev=False):
     worker_cnt = os.cpu_count() - 2
     build_cmd = (
         "source /opt/ros/humble/setup.bash && cd /ros_ws && colcon build --symlink-install --parallel-workers "
         + str(worker_cnt)
     )
+    if build_bev:
+        print("Building BEV Fusion")
+        bev_install_cmd = (
+            "cd /ros_ws/src/spot-bev-fusion-ros/spot-bev-fusion/CUDA-BEVFusion"
+            + " && . tool/environment.sh && bash tool/build_trt_engine.sh && bash src/onnx/make_pb.sh && bash"
+            " tool/run.sh"
+        )
+        build_cmd = bev_install_cmd + " && " + build_cmd
+
     print("Building with " + str(worker_cnt) + " workers")
     try:
         _, stream = running_container.exec_run(f"bash -c '{build_cmd}'", stream=True, tty=True, workdir="/ros_ws")
@@ -85,10 +103,10 @@ def main():
         image = lookForDevContainer(client, dev_image_label="bev_ros2_container:latest")
     else:
         image = lookForDevContainer(client)
-    container = startDevContainer(client, image)
+    container = startDevContainer(client, image, is_bev_container=args.bev)
     if args.build:
         try:
-            buildSourceFiles(container)
+            buildSourceFiles(container, build_bev=args.bev)
         except KeyboardInterrupt:
             container.stop()
             exit(1)
