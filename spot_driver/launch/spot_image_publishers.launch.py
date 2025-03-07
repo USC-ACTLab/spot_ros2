@@ -14,7 +14,9 @@ from spot_driver.launch.spot_launch_helpers import (
     DepthRegisteredMode,
     declare_image_publisher_args,
     get_camera_sources,
+    get_user_calibration_file,
     spot_has_arm,
+    using_factory_calibration,
 )
 
 
@@ -130,12 +132,22 @@ def launch_setup(context: LaunchContext, ld: LaunchDescription) -> None:
     if depth_registered_mode is not DepthRegisteredMode.FROM_SPOT:
         spot_image_publisher_params.update({"publish_depth_registered": False})
 
+    camera_node_launch_params = [config_file, spot_image_publisher_params]
+    use_factory_calibration = using_factory_calibration(config_file_path)
+    if not use_factory_calibration:
+        intrinsics_file_path = get_user_calibration_file(config_file_path)
+        intrinsics_file_path = os.path.join(os.path.dirname(config_file_path), intrinsics_file_path)
+        if (intrinsics_file_path != "") and (not os.path.isfile(intrinsics_file_path)):
+            raise FileNotFoundError("Calibrated intrinsics file '{}' does not exist!".format(intrinsics_file_path))
+        camera_node_launch_params.append(intrinsics_file_path)
+
     spot_image_publisher_node = launch_ros.actions.Node(
         package="spot_driver",
         executable="spot_image_publisher_node",
         output="screen",
-        parameters=[config_file, spot_image_publisher_params],
+        parameters=camera_node_launch_params,
         namespace=spot_name,
+        arguments=["--ros-args", "--log-level", "debug"],
     )
     ld.add_action(spot_image_publisher_node)
 

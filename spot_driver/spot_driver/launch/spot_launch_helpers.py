@@ -22,6 +22,7 @@ _CERTIFICATE: Literal["certificate"] = "certificate"
 _PORT: Literal["port"] = "port"
 _CAMERAS_USED: Literal["cameras_used"] = "cameras_used"
 _GRIPPERLESS: Literal["gripperless"] = "gripperless"
+_USE_FACTORY_CALIBRATION: Literal["use_factory_calibration"] = "use_factory_calibration"
 
 
 IMAGE_PUBLISHER_ARGS = [
@@ -260,3 +261,36 @@ def spot_has_arm(config_file_path: str, spot_name: str) -> bool:
         gripperless=gripperless,
     )
     return spot_wrapper.has_arm()
+
+
+def using_factory_calibration(config_file_path: str) -> bool:
+    """Check if the user has specified to use the factory calibration in the config file.
+
+    Args:
+        config_file_path (str): Path to configuration yaml
+
+    Returns:
+        bool: True if the user has specified to use the factory calibration, False otherwise
+    """
+    ros_params = get_ros_param_dict(config_file_path)
+    use_factory_calibration = True
+    if _USE_FACTORY_CALIBRATION in ros_params:
+        if isinstance(ros_params[_USE_FACTORY_CALIBRATION], bool):
+            use_factory_calibration = ros_params[_USE_FACTORY_CALIBRATION]
+    return use_factory_calibration
+
+
+def get_user_calibration_file(config_file_path: str) -> str:
+    """Check if the user has specified a calibration file in the config file.
+
+    Args:
+        config_file_path (str): Path to configuration yaml
+
+    Returns:
+        str: The path to the calibration file if it exists, otherwise an empty string.
+    """
+    ros_params = get_ros_param_dict(config_file_path)
+    user_calibration_file = ""
+    if "calibration_file" in ros_params:
+        user_calibration_file = ros_params["calibration_file"]
+    return user_calibration_file

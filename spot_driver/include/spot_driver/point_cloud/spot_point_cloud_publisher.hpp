@@ -26,7 +26,7 @@ namespace spot_ros2::point_cloud {
 class SpotPointCloudPublisher {
  public:
   /**
-   * @brief A handle class around rclcpp::Node operations for SpotImagePublisher
+   * @brief A handle class around rclcpp::Node operations for SpotPointCloudPublisher
    */
   class MiddlewareHandle : public MiddlewareHandleBase {
    public:

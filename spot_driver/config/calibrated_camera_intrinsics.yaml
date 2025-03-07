@@ -1,0 +1,27 @@
+# Description: ACT-Lab Calibrated Camera Intrinsics for cameras on the Spot robot.
+# Author: Will Wu, ACT-LAB @ Brown University
+# Date: 2025-03-03
+# Format: 
+# Camera intrinsic matrix [fx, 0, cx, 0, fy, cy, 0, 0, 1]
+# Camera distortion: [k1, k2, t1, t2, k3]
+# Camera distortion model: plumb_bob (radial-tangential), equidistant, or rational_polynomial
+
+/**:
+  ros__parameters:
+    calibrated_left: {
+      distortion_model: plumb_bob,
+      distortion_coefficients: [-0.029611, 0.019158, 0.003538, -0.003762, 0.0],
+      intrinsics: [325.437306, 0.0, 311.544111, 0.0, 326.531424, 244.062272, 0.0, 0.0, 1.0],
+    }
+
+    calibrated_right: {
+      distortion_model: plumb_bob,
+      distortion_coefficients: [-0.037861, 0.018812, -0.000712, -0.005019, 0.0],
+      intrinsics: [330.689575, 0.0, 315.920776, 0.0, 329.705750, 239.573532, 0.0, 0.0, 1.0],
+    }
+
+    calibrated_back: {
+      distortion_model: plumb_bob,
+      distortion_coefficients: [-0.031723, 0.018812, 0.000329, 0.001976, 0.0],
+      intrinsics: [326.848631, 0.0, 321.199859, 0.0, 327.313480, 238.313794, 0.0, 0.0, 1.0]
+    }

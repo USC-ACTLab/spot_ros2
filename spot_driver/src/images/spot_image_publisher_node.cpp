@@ -59,6 +59,8 @@ void SpotImagePublisherNode::initialize(std::unique_ptr<SpotApi> spot_api,
   const auto robot_name = parameters->getSpotName();
   const auto username = parameters->getUsername();
   const auto password = parameters->getPassword();
+  const auto use_factory_calibration = parameters->getUseFactoryCalibration();
+  logger->logInfo(std::string{"Using factory calibration? "}.append(use_factory_calibration ? "Yes" : "No"));
 
   // create and authenticate robot
   if (const auto create_robot_result = spot_api_->createRobot(robot_name, hostname, port); !create_robot_result) {
@@ -82,7 +84,7 @@ void SpotImagePublisherNode::initialize(std::unique_ptr<SpotApi> spot_api,
 
   internal_ = std::make_unique<SpotImagePublisher>(spot_api_->image_client_interface(), std::move(mw_handle),
                                                    std::move(parameters), std::move(logger), std::move(tf_broadcaster),
-                                                   std::move(timer), expected_has_arm.value());
+                                                   std::move(timer), expected_has_arm.value(), use_factory_calibration);
 
   // TODO(jschornak): initialize() always returns true -- revise implementation to make it return void
   if (!internal_->initialize()) {

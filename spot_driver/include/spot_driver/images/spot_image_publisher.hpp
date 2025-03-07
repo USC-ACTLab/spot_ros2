@@ -17,6 +17,7 @@
 #include <spot_driver/interfaces/timer_interface_base.hpp>
 #include <spot_driver/types.hpp>
 #include <string>
+#include <tl_expected/expected.hpp>
 
 namespace spot_ros2::images {
 /**
@@ -40,6 +41,8 @@ namespace spot_ros2::images {
  * the middleware.
  */
 class SpotImagePublisher {
+  using UserCalibratedIntrinsics = std::map<ImageSource, sensor_msgs::msg::CameraInfo>;
+
  public:
   /**
    * @brief A handle class around rclcpp::Node operations for SpotImagePublisher
@@ -70,7 +73,8 @@ class SpotImagePublisher {
                      std::unique_ptr<MiddlewareHandle> middleware_handle,
                      std::unique_ptr<ParameterInterfaceBase> parameters, std::unique_ptr<LoggerInterfaceBase> logger,
                      std::unique_ptr<TfBroadcasterInterfaceBase> tf_broadcaster,
-                     std::unique_ptr<TimerInterfaceBase> timer, bool has_arm = false);
+                     std::unique_ptr<TimerInterfaceBase> timer, bool has_arm = false,
+                     bool use_factory_calibration = true);
 
   /**
    * @brief Connect to Spot and start publishing image data.
@@ -89,6 +93,10 @@ class SpotImagePublisher {
   void timerCallback(bool uncompress_images, bool publish_compressed_images);
 
   /**
+   * @brief Substitute factory intrinsic calibration with user calibration if directed
+   */
+  void subsituteUserCalibration(spot_ros2::GetImagesResult& get_image_result, const bool publish_compressed_images);
+  /**
    * @brief Image request message which is set when SpotImagePublisher::initialize() is called.
    * @details This is generated only once and then cached because the configuration of which cameras to request images
    * from, what quality to use, etc., does not dynamically change while the driver is running.
@@ -105,5 +113,6 @@ class SpotImagePublisher {
   std::unique_ptr<TimerInterfaceBase> timer_;
 
   bool has_arm_;
+  bool use_factory_calibration_;  // publish factory intrinsic calibration
 };
 }  // namespace spot_ros2::images

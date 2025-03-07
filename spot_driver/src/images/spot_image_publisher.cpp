@@ -69,14 +69,16 @@ SpotImagePublisher::SpotImagePublisher(const std::shared_ptr<ImageClientInterfac
                                        std::unique_ptr<ParameterInterfaceBase> parameters,
                                        std::unique_ptr<LoggerInterfaceBase> logger,
                                        std::unique_ptr<TfBroadcasterInterfaceBase> tf_broadcaster,
-                                       std::unique_ptr<TimerInterfaceBase> timer, bool has_arm)
+                                       std::unique_ptr<TimerInterfaceBase> timer, bool has_arm,
+                                       bool use_factory_calibration)
     : image_client_interface_{image_client_interface},
       middleware_handle_{std::move(middleware_handle)},
       parameters_{std::move(parameters)},
       logger_{std::move(logger)},
       tf_broadcaster_{std::move(tf_broadcaster)},
       timer_{std::move(timer)},
-      has_arm_{has_arm} {}
+      has_arm_{has_arm},
+      use_factory_calibration_{use_factory_calibration} {}
 
 bool SpotImagePublisher::initialize() {
   // These parameters all fall back to default values if the user did not set them at runtime
@@ -125,14 +127,44 @@ void SpotImagePublisher::timerCallback(bool uncompress_images, bool publish_comp
     return;
   }
 
-  const auto image_result =
+  auto image_result =
       image_client_interface_->getImages(*image_request_message_, uncompress_images, publish_compressed_images);
   if (!image_result.has_value()) {
     logger_->logError(std::string{"Failed to get images: "}.append(image_result.error()));
     return;
   }
 
+  if (!use_factory_calibration_) {
+    subsituteUserCalibration(image_result.value(), publish_compressed_images);
+  }
+
   middleware_handle_->publishImages(image_result.value().images_, image_result.value().compressed_images_);
   tf_broadcaster_->updateStaticTransforms(image_result.value().transforms_);
+}
+
+void SpotImagePublisher::subsituteUserCalibration(spot_ros2::GetImagesResult& get_image_result,
+                                                  const bool publish_compressed_images) {
+  const auto calibrated_intrinsics = parameters_->getUserCalibration();
+
+  // lambda for filling camera info
+  auto fill_cam_info = [this, &calibrated_intrinsics](sensor_msgs::msg::CameraInfo& camera_info_out,
+                                                      const spot_ros2::SpotCamera& camera) {
+    camera_info_out.distortion_model = calibrated_intrinsics.at(camera).distortion_model;
+    const auto& intrinsics = calibrated_intrinsics.at(camera).intrinsics;
+    camera_info_out.k = {intrinsics[0], intrinsics[1], intrinsics[2], intrinsics[3], intrinsics[4],
+                         intrinsics[5], intrinsics[6], intrinsics[7], intrinsics[8]};
+    camera_info_out.d = calibrated_intrinsics.at(camera).distortion_coeff;
+  };
+
+  for (auto& [source, image_with_camera_info] : get_image_result.images_) {
+    if (calibrated_intrinsics.find(source.camera) != calibrated_intrinsics.end()) {
+      fill_cam_info(image_with_camera_info.info, source.camera);
+    }
+  }
+  if (publish_compressed_images) {
+    for (auto& [source, compressed_image_with_camera_info] : get_image_result.compressed_images_) {
+      fill_cam_info(compressed_image_with_camera_info.info, source.camera);
+    }
+  }
 }
 }  // namespace spot_ros2::images

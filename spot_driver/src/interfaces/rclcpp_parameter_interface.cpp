@@ -30,6 +30,7 @@ constexpr auto kParameterPreferredOdomFrame = "preferred_odom_frame";
 constexpr auto kParameterTFRoot = "tf_root";
 constexpr auto kParameterNameGripperless = "gripperless";
 constexpr auto kParameterTimeSyncTimeout = "timesync_timeout";
+constexpr auto kParameterNameUseFactoryCalib = "use_factory_calibration";
 
 /**
  * @brief Get a rclcpp parameter. If the parameter has not been declared, declare it with the provided default value and
@@ -196,6 +197,28 @@ std::string RclcppParameterInterface::getTFRoot() const {
 
 bool RclcppParameterInterface::getGripperless() const {
   return declareAndGetParameter<bool>(node_, kParameterNameGripperless, kDefaultGripperless);
+}
+
+bool RclcppParameterInterface::getUseFactoryCalibration() const {
+  return declareAndGetParameter<bool>(node_, kParameterNameUseFactoryCalib, kUseFactoryCalibration);
+}
+
+std::map<spot_ros2::SpotCamera, CameraParameters> RclcppParameterInterface::getUserCalibration() const {
+  const auto calibrated_cameras =
+      declareAndGetParameter<std::vector<std::string>>(node_, "user_calibrated_cameras", {});
+  std::map<spot_ros2::SpotCamera, CameraParameters> user_calibration;
+  for (const auto& calibrated_camera : calibrated_cameras) {
+    const auto ros_param_prefix = "calibrated_" + calibrated_camera;
+    const auto calibrated_intrinsics =
+        declareAndGetParameter<std::vector<double>>(node_, ros_param_prefix + ".intrinsics", std::vector<double>{});
+    const auto calibrated_distortion = declareAndGetParameter<std::vector<double>>(
+        node_, ros_param_prefix + ".distortion_coefficients", std::vector<double>{});
+    const auto distortion_model =
+        declareAndGetParameter<std::string>(node_, ros_param_prefix + ".distortion_model", "plumb_bob");
+    user_calibration[kRosStringToSpotCamera.at(calibrated_camera)] = {calibrated_intrinsics, calibrated_distortion,
+                                                                      distortion_model};
+  }
+  return user_calibration;
 }
 
 std::chrono::seconds RclcppParameterInterface::getTimeSyncTimeout() const {

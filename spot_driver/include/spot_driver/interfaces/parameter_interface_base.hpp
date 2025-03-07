@@ -3,14 +3,21 @@
 #pragma once
 
 #include <chrono>
+#include <map>
 #include <optional>
 #include <set>
 #include <string>
 #include <tl_expected/expected.hpp>
+#include <vector>
 
 #include <spot_driver/types.hpp>
 
 namespace spot_ros2 {
+struct CameraParameters {
+  std::vector<double> intrinsics;
+  std::vector<double> distortion_coeff;
+  std::string distortion_model;
+};
 /**
  * @brief Defines an interface for a class that retrieves the user-configured parameters needed to connect to Spot.
  */
@@ -48,6 +55,8 @@ class ParameterInterfaceBase {
   virtual tl::expected<std::set<spot_ros2::SpotCamera>, std::string> getCamerasUsed(bool has_arm,
                                                                                     bool gripperless) const = 0;
   virtual std::chrono::seconds getTimeSyncTimeout() const = 0;
+  virtual bool getUseFactoryCalibration() const = 0;
+  virtual std::map<spot_ros2::SpotCamera, CameraParameters> getUserCalibration() const = 0;
 
  protected:
   // These are the definitions of the default values for optional parameters.
@@ -67,5 +76,6 @@ class ParameterInterfaceBase {
   static constexpr auto kCamerasWithoutHand = {"frontleft", "frontright", "left", "right", "back"};
   static constexpr auto kCamerasWithHand = {"frontleft", "frontright", "left", "right", "back", "hand"};
   static constexpr std::chrono::seconds kDefaultTimeSyncTimeout{5};
+  static constexpr auto kUseFactoryCalibration{true};
 };
 }  // namespace spot_ros2

@@ -5,6 +5,7 @@
 #include <spot_driver/interfaces/parameter_interface_base.hpp>
 
 #include <chrono>
+#include <map>
 #include <optional>
 #include <set>
 #include <string>
@@ -44,6 +45,9 @@ class FakeParameterInterface : public ParameterInterfaceBase {
   std::string getSpotName() const override { return spot_name; }
 
   bool getGripperless() const override { return gripperless; }
+
+  bool getUseFactoryCalibration() const override { return true; }
+  std::map<spot_ros2::SpotCamera, CameraParameters> getUserCalibration() const override { return {}; }
 
   std::set<spot_ros2::SpotCamera> getDefaultCamerasUsed(const bool has_arm, const bool gripperless) const override {
     const auto kDefaultCamerasUsed = (has_arm && !gripperless) ? kCamerasWithHand : kCamerasWithoutHand;
