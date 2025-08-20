@@ -11,3 +11,4 @@
 [submodule "spot-bev-fusion-ros"]
 	path = spot-bev-fusion-ros
 	url = https://github.com/USC-ACTLab/spot-bev-fusion-ros.git
+	update = none

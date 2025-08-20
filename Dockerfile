@@ -30,6 +30,12 @@ RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o 
 RUN apt-get update -q && \
     apt-get install -yq --no-install-recommends \
     wget \ 
+    iputils-ping \
+    iproute2 \
+    usbutils \
+    network-manager \
+    nano \
+    ufw \
     software-properties-common \ 
     python3-pip \
     python-is-python3 \
@@ -41,6 +47,11 @@ RUN apt-get update -q && \
     python3-tk \
     ros-humble-ros-base \
     ros-dev-tools \
+    ros-humble-librealsense2* \
+    ros-humble-realsense2-* \ 
+    ros-humble-velodyne \ 
+    ros-humble-velodyne-driver \ 
+    ros-humble-velodyne-pointcloud \
     #check if Zenoh should be installed
     $(if [ "$EXPERIMENTAL_ZENOH_RMW" = "TRUE" ]; then echo "ros-humble-rmw-zenoh-cpp"; fi) \
     && rm -rf /var/lib/apt/lists/*
@@ -53,7 +64,9 @@ RUN rosdep init && rosdep update
 
 # Clone driver code
 RUN git clone https://github.com/USC-ACTLab/spot_ros2.git .
-RUN git submodule update --init --recursive
+RUN git submodule init 
+RUN git submodule deinit spot-bev-fusion-ros
+RUN git submodule update --recursive
 
 # Run install script and pass in the architecture
 RUN ARCH=$(dpkg --print-architecture) && echo "Building driver with $ARCH" && /ros_ws/src/install_spot_ros2.sh --$ARCH

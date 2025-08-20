@@ -3,7 +3,7 @@
     # Spot Login Information
     username: "user"
     password: "bigbubbabigbubba"
-    hostname: "138.16.161.23"
+    hostname: "128.148.140.23"
 
     # Status Updates from Spot
     metrics_rate: 0.04

@@ -59,6 +59,7 @@ def startDevContainer(docker_client, image, is_bev_container=False):
         runtime="nvidia",
         device_requests=device_request,
         environment=enviornment,
+        network_mode="host"
     )
     container.start()
     return container
