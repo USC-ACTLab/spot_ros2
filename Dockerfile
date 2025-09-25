@@ -52,6 +52,7 @@ RUN apt-get update -q && \
     ros-humble-velodyne \ 
     ros-humble-velodyne-driver \ 
     ros-humble-velodyne-pointcloud \
+    ros-humble-rviz2 \
     #check if Zenoh should be installed
     $(if [ "$EXPERIMENTAL_ZENOH_RMW" = "TRUE" ]; then echo "ros-humble-rmw-zenoh-cpp"; fi) \
     && rm -rf /var/lib/apt/lists/*
@@ -70,6 +71,9 @@ RUN git submodule update --recursive
 
 # Run install script and pass in the architecture
 RUN ARCH=$(dpkg --print-architecture) && echo "Building driver with $ARCH" && /ros_ws/src/install_spot_ros2.sh --$ARCH
+
+# Setup networking 
+RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf
 
 # Build packages with Colcon
 WORKDIR /ros_ws/
